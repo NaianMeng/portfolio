@@ -1,6 +1,6 @@
 // Shared motion-project covers: add source and poster when each film is available.
 (()=>{
- const covers=[{slug:'revista-video-visao',src:'assets/revista/cover-olhos-longo.mp4',poster:'assets/revista/cover-rostos.webp'},{slug:'revista-infografico',src:'assets/visao/cover-coleta.mp4',poster:'assets/visao/cover-coleta.webp'},{slug:'fragmin',src:'assets/fragmin/cover.mp4',poster:'assets/fragmin/abertura.webp'},{slug:'nave-3d-02',src:'assets/exodus/cover.mp4',poster:'assets/exodus/estrutura.webp'},{slug:'emilie-chamie',src:'assets/emilie/cover.mp4',poster:'assets/emilie/Motion_01.webp'}];
+ const covers=[{slug:'revista-video-visao',src:'assets/revista/cover-galeria.mp4',poster:'assets/revista/cover-rostos.webp'},{slug:'revista-infografico',src:'assets/visao/cover-coleta.mp4',poster:'assets/visao/cover-coleta.webp'},{slug:'fragmin',src:'assets/fragmin/cover.mp4',poster:'assets/fragmin/abertura.webp'},{slug:'nave-3d-02',src:'assets/exodus/cover.mp4',poster:'assets/exodus/estrutura.webp'},{slug:'emilie-chamie',src:'assets/emilie/cover.mp4',poster:'assets/emilie/Motion_01.webp'}];
  const videos=[];
  for(const cover of covers){
   const cards=document.querySelectorAll('.works-grid>a[href="#project/'+cover.slug+'"],.selected-grid>a[href="#project/'+cover.slug+'"]');
