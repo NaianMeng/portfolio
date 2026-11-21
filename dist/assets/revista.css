@@ -1,0 +1,32 @@
+body.revista-active>.case-view{display:none!important}.rv-page{--rv-gap:clamp(24px,2.4vw,36px);--rv-space:clamp(64px,7vw,96px)}.rv-section{margin-top:var(--rv-space)!important}.rv-group{margin-top:var(--rv-gap)!important}.rv-figure,.rv-hero{margin:0;min-width:0}.rv-figure img{width:100%;height:auto;display:block}.rv-hero video{display:block;width:100%;height:auto;aspect-ratio:4744/1080;background:#080808}.rv-intro,.rv-production,.rv-pair,.rv-quote-row,.rv-mosaic{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--rv-gap);align-items:start}.rv-page .tp-copy{grid-column:auto;max-width:44ch}.rv-page .tp-copy p+p{margin-top:18px}.rv-intro img{aspect-ratio:1;object-fit:cover}.rv-pair img{aspect-ratio:1;object-fit:cover}.rv-wide img{max-height:780px;object-fit:cover}.rv-quote-row{align-items:end}.rv-portrait img{aspect-ratio:9/10;object-fit:cover}.rv-eye{border:0;margin:0;padding:0;text-align:right;min-width:0}.rv-eye .tp-eye{margin:0;max-width:none;font-size:clamp(25px,3vw,44px);line-height:1.3}.rv-eye .tp-quote-mark{margin-bottom:22px}.rv-stack{display:flex;flex-direction:column;gap:var(--rv-gap);min-width:0}.rv-production{align-items:stretch}.rv-tall{height:100%}.rv-tall img{height:100%;object-fit:cover}.rv-production .rv-stack>.rv-figure img{aspect-ratio:1.25;object-fit:cover}.rv-mosaic{align-items:stretch}.rv-mosaic .rv-stack img{aspect-ratio:1.35;object-fit:cover}.rv-panorama img{aspect-ratio:4744/1080;object-fit:contain;background:#000}.rv-page .tp-more{margin-top:var(--rv-space)}
+@media(max-width:700px){.rv-intro,.rv-production,.rv-pair,.rv-quote-row,.rv-mosaic{grid-template-columns:minmax(0,1fr)}.rv-page{--rv-space:56px}.rv-page .tp-heading h1{font-size:clamp(32px,9vw,54px)}.rv-tall img{height:auto;max-height:680px;object-fit:contain}.rv-eye{padding-top:8px}.rv-eye .tp-eye{font-size:clamp(26px,6.5vw,36px)}.rv-intro img,.rv-pair img{aspect-ratio:auto}.rv-page .tp-copy{max-width:48ch}}
+
+
+
+.rv-reference-mosaic,.rv-reference-pair,.rv-reference-quote{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--rv-gap);align-items:stretch}
+.rv-extra .rv-figure{overflow:hidden;min-width:0}
+.rv-reference-mosaic .rv-stack img{aspect-ratio:4/3;object-fit:cover}
+.rv-reference-tall img{height:100%;object-fit:cover}
+.rv-reference-pair img{height:100%;aspect-ratio:1.1;object-fit:cover}
+.rv-reference-quote-side{display:flex;flex-direction:column;justify-content:end;gap:var(--rv-gap);min-width:0}
+.rv-reference-quote>.rv-reference-tall{aspect-ratio:3/5}
+.rv-reference-quote-side>.rv-figure img{aspect-ratio:1.6;object-fit:contain;background:#eee}
+.rv-reference-quote .rv-eye .tp-eye{font-size:clamp(25px,2.8vw,41px)}
+.rv-reference-wide img{aspect-ratio:1.85;object-fit:cover}
+.rv-extra-motion{width:calc((100% - var(--rv-gap))/2);margin-left:auto;margin-right:auto}
+.rv-extra video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#161616}
+.rv-magazine-slot{min-height:240px;aspect-ratio:1.85;background:#202022;border:1px solid #ffffff20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:32px}
+.rv-magazine-slot p{margin:0;font-family:var(--font-display);font-size:clamp(23px,3vw,38px)}.rv-magazine-slot span{font-size:14px;color:var(--soft)}
+@media(max-width:700px){.rv-reference-mosaic,.rv-reference-pair,.rv-reference-quote{grid-template-columns:minmax(0,1fr)}.rv-reference-tall img{height:auto;max-height:680px;object-fit:cover}.rv-reference-quote>.rv-reference-tall{aspect-ratio:auto}.rv-reference-quote-side{gap:32px}.rv-reference-pair img{aspect-ratio:4/3}.rv-reference-wide img{aspect-ratio:4/3}.rv-extra-motion{width:100%;max-width:520px}.rv-magazine-slot{min-height:200px;aspect-ratio:auto}}
+
+/* Consistent filled frames with individual focal points. */
+.rv-figure{overflow:hidden}
+.rv-page .rv-figure img{object-fit:cover;object-position:center;max-width:100%}
+.rv-reference-mosaic .rv-reference-tall img{object-position:70% center}
+.rv-reference-quote>.rv-reference-tall img{object-position:center}
+.rv-intro img{object-position:center}
+.rv-production>.rv-tall img{object-position:center 48%}
+.rv-portrait img{object-position:center 45%}
+.rv-final-banner img{aspect-ratio:1.85;height:auto;max-height:none;object-position:center}
+.rv-reference-quote-side>.rv-figure img{object-fit:cover;object-position:center;background:#eee}
+@media(max-width:700px){.rv-page .rv-figure img{height:auto}.rv-reference-mosaic .rv-reference-tall img{aspect-ratio:4/3;object-position:center}.rv-reference-quote>.rv-reference-tall img{aspect-ratio:4/5}.rv-final-banner img{aspect-ratio:1.6}.rv-quote-row .rv-eye{padding-bottom:0}}

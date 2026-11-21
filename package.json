@@ -1,0 +1,1 @@
+{"name":"naian-portfolio","version":"1.0.0","private":true,"description":"Portfolio estático de Naian Menginelli","scripts":{"check":"node --check dist/assets/app.js","start":"python3 -m http.server 8080 --directory dist"}}

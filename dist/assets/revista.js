@@ -1,0 +1,1 @@
+(()=>{const page=document.getElementById('revista-page');function update(target){const active=target==='project/revista-video-visao';document.body.classList.toggle('revista-active',active);page.hidden=!active;if(!active)page.querySelectorAll('video').forEach(v=>v.pause());}window.addEventListener('portfolio:route',e=>update(e.detail));update(location.hash.slice(1));})();

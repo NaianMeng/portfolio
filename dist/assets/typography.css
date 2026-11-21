@@ -1,0 +1,46 @@
+/* Adobe Fonts: one shared hierarchy across all routes. */
+:root{--font-display:"elevon",sans-serif;--font-text:"protipo",Arial,Helvetica,sans-serif}
+html{font-synthesis:none}
+body{font-family:var(--font-text);font-weight:400}
+button,input,textarea,select{font-family:var(--font-text)}
+p,figcaption,small,label,input,textarea,select,dd,dt{font-family:var(--font-text);font-weight:400}
+button,.site-nav a,.primary-link,.gallery-link,.about-bottom a,.contact-bottom a,.case-footer a{font-weight:700}
+strong,b{font-weight:700}
+h1,h2,h3,h4,h5,h6,.node span,.face strong,.about-face strong,#case-art{font-family:var(--font-display);font-style:normal;letter-spacing:0;line-height:1.18;font-weight:300}
+.work-view .work-intro h2,.about-view .about-copy h2,.contact-view .contact-copy h2{font-size:clamp(52px,6.4vw,92px);font-weight:200;letter-spacing:-.005em;line-height:1.1}
+.ec-heading{flex-wrap:wrap;row-gap:20px}
+.ec-heading h1{font-size:clamp(40px,6vw,86px);font-weight:200;letter-spacing:-.005em;line-height:1.12;max-width:100%;overflow-wrap:break-word}
+.case-body h2{font-size:clamp(38px,5vw,70px);font-weight:200;letter-spacing:-.005em;line-height:1.15;overflow-wrap:break-word}
+.shell .section-heading h2,.work-view .gallery-heading h2{font-size:clamp(25px,2.5vw,36px);font-weight:300;letter-spacing:0;line-height:1.2}
+.ec-copy h3,.ec-categories h3,.case-text h3,.about-detail h3{font-size:clamp(22px,2.4vw,32px);font-weight:300;letter-spacing:0;line-height:1.25;overflow-wrap:break-word}
+.works-grid h3,.selected-grid h3{font-size:clamp(21px,2vw,29px);font-weight:300;line-height:1.25;letter-spacing:0;overflow-wrap:break-word}
+.node span{font-size:14px;font-weight:400;letter-spacing:.015em;line-height:1.2}
+.face strong{font-size:clamp(19px,2.4vw,30px);font-weight:300;letter-spacing:0;line-height:1.25;overflow-wrap:break-word}
+.about-face strong{font-size:clamp(26px,3.2vw,42px);font-weight:300;letter-spacing:0;line-height:1.2;overflow-wrap:break-word}
+#case-art{font-weight:300;letter-spacing:0;overflow-wrap:break-word}
+.shell .copy .eyebrow{font-family:var(--font-text);font-size:12px;font-weight:700;letter-spacing:.1em;line-height:1.5}
+.case-tags span,.project-index,.gallery-number,.ec-credits,.ec-heading p,.face small,.about-face small,.node small,.project-type,.project-no,.crumb,.case-kicker,.eyeline,.progress{font-family:var(--font-text);font-weight:400}
+.contact-form label{font-weight:700}
+.contact-form input,.contact-form textarea{font-family:var(--font-text);font-weight:400;font-size:16px}
+.ec-copy p,.case-body p,.case-text p,.about-detail p{font-weight:400}
+@media(max-width:640px){
+ .work-view .work-intro h2,.about-view .about-copy h2,.contact-view .contact-copy h2{font-size:clamp(40px,12vw,64px)}
+ .ec-heading h1{font-size:clamp(34px,8.3vw,52px)}
+ .shell .section-heading h2,.work-view .gallery-heading h2{font-size:24px}
+ .ec-copy h3,.ec-categories h3,.case-text h3,.about-detail h3{font-size:23px}
+ .works-grid h3{font-size:23px}
+ .face strong{font-size:21px}
+ .about-face strong{font-size:28px}
+}
+.about-view .about-detail h3{font-weight:300;letter-spacing:0;line-height:1.25}
+
+/* Optical spacing: preserve the family's kerning and avoid compressed letters. */
+h1,h2,h3,h4,h5,h6,.node span,.face strong,.about-face strong,#case-art{font-kerning:normal;font-variant-ligatures:common-ligatures;word-spacing:normal;word-break:normal;hyphens:none}
+.case-body h2,.ec-heading h1,.works-grid h3,.selected-grid h3,.ec-copy h3,.ec-categories h3,.case-text h3,.about-view .about-detail h3{text-wrap:balance;overflow-wrap:normal}
+.ec-page figcaption,.ec-credits dt,.ec-credits dd{line-height:1.6}
+@media(max-width:640px){
+ .work-view .work-intro h2,.about-view .about-copy h2,.contact-view .contact-copy h2,.case-body h2,.ec-heading h1{letter-spacing:0}
+ .case-body h2{font-size:clamp(30px,8.5vw,46px);line-height:1.2}
+ .ec-heading h1{font-size:clamp(30px,8.3vw,52px)}
+}
+.about-view .about-detail h3{font-size:clamp(24px,2.2vw,32px);text-wrap:balance}
