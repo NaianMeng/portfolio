@@ -641,3 +641,19 @@ body{background:var(--bg)}
   border-color: #fff;
   background: #8c2925;
 }
+
+.works-grid > a {
+  scroll-margin-block: 90px 16px;
+}
+
+.works-grid > a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-color: #fff;
+}
+
+.work-view .scroll-preview:is(.gallery-link:focus-visible, .works-grid > a:focus-visible) {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}

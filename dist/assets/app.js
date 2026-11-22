@@ -79,10 +79,11 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
   const legacyProjects=projects.slice();
   projects.splice(0,projects.length,...catalogue.map(([slug,title])=>legacyProjects.find(p=>p.slug===slug)||{slug,title,short:title,summary:"",overview:"",tags:[],concept:"",process:"",result:""}));
   const gallery=document.getElementById("works-gallery");
-  for(const [i,project] of projects.entries()){const link=document.createElement("a");link.href="#project/"+project.slug;link.tabIndex=-1;const number=document.createElement("span");number.className="gallery-number";number.textContent=String(i+1).padStart(2,"0");const title=document.createElement("h3");title.textContent=project.title;link.append(number,title);gallery.appendChild(link)}
+  for(const [i,project] of projects.entries()){const link=document.createElement("a");link.href="#project/"+project.slug;const number=document.createElement("span");number.className="gallery-number";number.textContent=String(i+1).padStart(2,"0");const title=document.createElement("h3");title.textContent=project.title;link.append(number,title);gallery.appendChild(link)}
   const body=document.body, homeWork=document.querySelector('.shell .node.work'), homeContact=document.querySelector('.shell .node.contact'), homeAbout=document.querySelector('.shell .node.about'), cube=document.getElementById('works-cube'), stage=document.getElementById('cube-stage');
   function safeRoute(value){try{return decodeURIComponent(value)}catch{return 'home'}}
   let navigationRevision=0;
+  let galleryOrigin=null;
   function show(target, push=false) {
     const revision=++navigationRevision;
     const galleryTarget=target==='works/all';
@@ -108,9 +109,31 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
     if(galleryTarget){
       requestAnimationFrame(()=>{
         if(revision!==navigationRevision)return;
-        document.querySelector('.works-gallery').scrollIntoView({behavior:push&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'instant',block:'start'});
+        if(galleryOrigin){
+          galleryOrigin.focus({preventScroll:true});
+          galleryOrigin.scrollIntoView({block:'nearest',behavior:'instant'});
+          galleryOrigin=null;
+          return;
+        }
+        const keyboardEntry=push&&document.activeElement?.matches('.gallery-link:focus-visible');
+        if(push){
+          const heading=document.getElementById('gallery-title');
+          heading.tabIndex=-1;
+          heading.focus({preventScroll:true});
+        }
+        document.querySelector('.works-gallery').scrollIntoView({behavior:push&&!keyboardEntry&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'instant',block:'start'});
       });
-    }else window.scrollTo(0,0);
+    }else {
+      window.scrollTo(0,0);
+      if(view==='case'&&push&&galleryOrigin){
+        const heading=[...document.querySelectorAll('article h1, .case-view #case-title')]
+          .find(element=>element.getClientRects().length);
+        if(heading){
+          heading.tabIndex=-1;
+          heading.focus({preventScroll:true});
+        }
+      }else if(view!=='case') galleryOrigin=null;
+    }
   }
   homeWork.addEventListener('click',()=>show('works',true));
   homeContact.addEventListener('click',()=>show('contact',true));
@@ -118,7 +141,10 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
   document.addEventListener('click',e=>{
     const anchor=e.target.closest('a[href^="#"]');
     if(!anchor)return;
-    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0)return; const target=safeRoute(anchor.getAttribute('href').slice(1));
+    if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0)return;
+    let target=safeRoute(anchor.getAttribute('href').slice(1));
+    if(gallery.contains(anchor)) galleryOrigin=anchor;
+    if(target==='works'&&galleryOrigin&&anchor.closest('.case-footer, .subhead')) target='works/all';
     if(target==='home'||target==='works'||target==='works/all'||target==='contact'||target==='about'||target.startsWith('project/')){e.preventDefault();show(target,true)}
   });
   window.addEventListener('popstate',()=>show(safeRoute(location.hash.slice(1))));

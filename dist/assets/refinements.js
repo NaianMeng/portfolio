@@ -23,6 +23,9 @@
  document.addEventListener('pointermove',e=>{if(desktop.matches&&e.pointerType==='mouse'&&e.clientY<24)setOpen(true);},{passive:true});
  document.querySelectorAll('[data-scroll-to]').forEach(button=>button.addEventListener('click',()=>{const target=document.querySelector(button.dataset.scrollTo);target?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}));
  document.querySelectorAll('p').forEach(p=>{if(p.children.length||p.classList.contains('ec-eye'))return;const text=p.textContent.trim();p.textContent=text.replace(/ (\S+)$/,'\u00a0$1');});
- document.querySelectorAll('a,button,input,textarea,[tabindex]').forEach(el=>el.tabIndex=-1);
+ const worksKeyboardLinks = 'a[data-nav="works"], .work-view .gallery-link, .works-grid > a, .case-footer a[href="#works"]';
+ document.querySelectorAll('a,button,input,textarea,[tabindex]').forEach(el=>{
+  if(!el.matches(worksKeyboardLinks)) el.tabIndex=-1;
+ });
  setOpen(open);
 })();
