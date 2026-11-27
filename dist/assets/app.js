@@ -2,7 +2,7 @@
 
 (()=>{const ns='http://www.w3.org/2000/svg',eg=document.getElementById('edges'),vg=document.getElementById('vertices'),scene=document.getElementById('scene'),toggle=document.getElementById('toggle'),selection=document.getElementById('selection');
 const vertices=Array.from({length:16},(_,i)=>Array.from({length:4},(_,a)=>i&(1<<a)?1:-1)),edges=[];for(let i=0;i<16;i++)for(let a=0;a<4;a++){const j=i^(1<<a);if(i<j)edges.push([i,j])}
-const lines=edges.map(()=>{const el=document.createElementNS(ns,'line');el.setAttribute('class','edge');eg.appendChild(el);return el}),dots=vertices.map(()=>{const el=document.createElementNS(ns,'circle');el.setAttribute('class','dot');vg.appendChild(el);return el});
+const lines=edges.map(([a,b])=>{const el=document.createElementNS(ns,'line');el.setAttribute('class','edge');el.setAttribute('stroke-width',vertices[a][3]!==vertices[b][3]?1.3:1.8);eg.appendChild(el);return el}),dots=vertices.map((_,i)=>{const el=document.createElementNS(ns,'circle');el.setAttribute('class','dot');el.setAttribute('r',[0,3,14].includes(i)?5:2.5);vg.appendChild(el);return el});
 
 // Menu labels follow fixed 4D vertices through the exact SVG screen projection.
 const homeSvg=eg.ownerSVGElement;
@@ -13,21 +13,31 @@ const bindings=[['.node.work',0],['.node.about',3],['.node.contact',14]].map(([s
  line.setAttribute('class','vertex-tether');tetherSvg.appendChild(line);dots[index].classList.add('menu-vertex');
  function highlight(active){button.classList.toggle('vertex-active',active);dots[index].classList.toggle('vertex-active',active);line.classList.toggle('vertex-active',active)}
  button.addEventListener('pointerenter',()=>highlight(true));button.addEventListener('pointerleave',()=>highlight(document.activeElement===button));button.addEventListener('focus',()=>highlight(true));button.addEventListener('blur',()=>highlight(false));
+ button.style.left='0';
+ button.style.top='0';
  return {button,index,line};
 });
-function positionMenu(points){
+let menuLayout;
+function measureMenu(){
  const matrix=homeSvg.getScreenCTM(),box=scene.getBoundingClientRect();
  if(!matrix||box.width<1||box.height<1)return;
+ const offsetX=matrix.e-box.left-scene.clientLeft,offsetY=matrix.f-box.top-scene.clientTop;
+ const labels=bindings.map(binding=>({...binding,width:binding.button.offsetWidth,height:binding.button.offsetHeight}));
  tetherSvg.setAttribute('viewBox','0 0 '+box.width+' '+box.height);
+ return {matrix,offsetX,offsetY,width:box.width,height:box.height,labels};
+}
+function positionMenu(points){
+ if(!menuLayout)return;
+ const {matrix,offsetX,offsetY,width:sceneWidth,height:sceneHeight,labels}=menuLayout;
  const gap=10,pad=10,placed=[];
  const clamp=(v,min,max)=>Math.max(min,Math.min(v,Math.max(min,max)));
- for(const {button,index,line} of bindings){
-  const point=homeSvg.createSVGPoint();point.x=points[index].x;point.y=points[index].y;
-  const screen=point.matrixTransform(matrix),x=screen.x-box.left-scene.clientLeft,y=screen.y-box.top-scene.clientTop;
-  const width=button.offsetWidth,height=button.offsetHeight;
+ for(const {button,index,line,width,height} of labels){
+  const point=points[index];
+  const x=point.x*matrix.a+point.y*matrix.c+offsetX;
+  const y=point.x*matrix.b+point.y*matrix.d+offsetY;
   // Each label keeps one attachment direction. Only the local offset changes
   // when a boundary or another label requires room; projection never lags.
-  const maxLeft=box.width-width-pad,maxTop=box.height-height-42;
+  const maxLeft=sceneWidth-width-pad,maxTop=sceneHeight-height-42;
   const preferred=index===0?{left:x-width/2,top:y-height-gap}:
     index===3?{left:x+gap,top:y-height/2}:{left:x-width-gap,top:y-height/2};
   const candidates=[preferred,
@@ -45,7 +55,7 @@ function positionMenu(points){
    if(cost===0)break;
   }
   placed.push(chosen);
-  button.style.left=chosen.left+'px';button.style.top=chosen.top+'px';
+  button.style.translate=chosen.left+'px '+chosen.top+'px';
   const endX=clamp(x,chosen.left,chosen.left+width),endY=clamp(y,chosen.top,chosen.top+height);
   line.setAttribute('x1',x);line.setAttribute('y1',y);
   line.setAttribute('x2',endX);line.setAttribute('y2',endY);
@@ -53,14 +63,23 @@ function positionMenu(points){
 }
 
 const angles={xw:.29,yw:-.35,zw:.13,xy:.12,xz:-.31,yz:.24};function rot(v,a,b,t){const c=Math.cos(t),s=Math.sin(t),x=v[a],y=v[b];v[a]=x*c-y*s;v[b]=x*s+y*c}
-function project(base){let v=[...base];rot(v,0,3,angles.xw);rot(v,1,3,angles.yw);rot(v,2,3,angles.zw);const w=4/(4-v[3]);v=[v[0]*w,v[1]*w,v[2]*w];rot(v,0,1,angles.xy);rot(v,0,2,angles.xz);rot(v,1,2,angles.yz);const depth=6/(6-v[2]);return{x:350+v[0]*130*depth,y:350+v[1]*130*depth,z:v[2],w:base[3]}}
-function draw(){const p=vertices.map(project);edges.forEach(([a,b],i)=>{const el=lines[i];el.setAttribute('x1',p[a].x);el.setAttribute('y1',p[a].y);el.setAttribute('x2',p[b].x);el.setAttribute('y2',p[b].y);el.setAttribute('stroke-width',p[a].w!==p[b].w?1.3:1.8);el.setAttribute('opacity',Math.max(.3,Math.min(.95,.64+(p[a].z+p[b].z)*.11)))});p.forEach((v,i)=>{dots[i].setAttribute('cx',v.x);dots[i].setAttribute('cy',v.y);dots[i].setAttribute('r',[0,3,14].includes(i)?5:2.5)});positionMenu(p)}draw();
+function project(base){let v=[...base];rot(v,0,3,angles.xw);rot(v,1,3,angles.yw);rot(v,2,3,angles.zw);const w=4/(4-v[3]);v=[v[0]*w,v[1]*w,v[2]*w];rot(v,0,1,angles.xy);rot(v,0,2,angles.xz);rot(v,1,2,angles.yz);const depth=6/(6-v[2]);return{x:350+v[0]*130*depth,y:350+v[1]*130*depth,z:v[2]}}
+function draw(){const p=vertices.map(project);edges.forEach(([a,b],i)=>{const el=lines[i];el.setAttribute('x1',p[a].x);el.setAttribute('y1',p[a].y);el.setAttribute('x2',p[b].x);el.setAttribute('y2',p[b].y);el.setAttribute('opacity',Math.max(.3,Math.min(.95,.64+(p[a].z+p[b].z)*.11)))});p.forEach((v,i)=>{dots[i].setAttribute('cx',v.x);dots[i].setAttribute('cy',v.y)});positionMenu(p)}
 let pointer=null,moved=false;scene.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;e.preventDefault();pointer={id:e.pointerId,x:e.clientX,y:e.clientY};moved=false;scene.setPointerCapture(e.pointerId)});scene.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(Math.abs(dx)+Math.abs(dy)>1)moved=true;angles.xw+=dx*.006;angles.yw+=dy*.006;angles.xy+=dx*.002;angles.xz+=dy*.002;pointer.x=e.clientX;pointer.y=e.clientY;draw()});scene.addEventListener('pointercancel',()=>{pointer=null});scene.addEventListener('pointerup',e=>{if(!pointer||pointer.id!==e.pointerId)return;pointer=null;if(!moved&&!scene.classList.contains('open'))open(true)});
 function open(value){scene.classList.toggle('open',value);toggle.setAttribute('aria-expanded',String(value));toggle.innerHTML=value?'Recolher menu':'Explorar o hipercubo';scene.querySelectorAll('.node').forEach(el=>el.tabIndex=-1);draw()}toggle.addEventListener('click',()=>open(!scene.classList.contains('open')));
-if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>draw()).observe(scene);
-window.addEventListener('resize',draw);
-if(typeof ResizeObserver!=='undefined'){const labelObserver=new ResizeObserver(draw);bindings.forEach(({button})=>labelObserver.observe(button));}
-if(document.fonts)document.fonts.ready.then(draw);
+function refreshMenuLayout(){
+ menuLayout=measureMenu();
+ draw();
+}
+if(typeof ResizeObserver!=='undefined'){
+ const layoutObserver=new ResizeObserver(refreshMenuLayout);
+ layoutObserver.observe(scene);
+ bindings.forEach(({button})=>layoutObserver.observe(button));
+}
+window.addEventListener('resize',refreshMenuLayout);
+window.addEventListener('portfolio:route',event=>{if(event.detail==='home')refreshMenuLayout()});
+if(document.fonts)document.fonts.ready.then(refreshMenuLayout);
+menuLayout=measureMenu();
 open(true);
 
 window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,pauseOnHover:false,hitTest:event=>Boolean(event.target.closest('.node'))||window.portfolioMotion.svgHit(homeSvg,eg,event),apply:x=>{const delta=x*Math.PI/180;angles.zw=(angles.zw+delta)%(Math.PI*2);draw()}});
@@ -75,16 +94,31 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
     {slug:'emilie-chamie',title:'Prêmio Emilie Chamie',short:'EMILIE CHAMIE',summary:'Uma identidade visual para o prêmio e a mostra estudantil, pensada para circular entre peças gráficas, audiovisual e o espaço do evento.',overview:'O conceito visual parte da passagem entre dia e noite, associada aos diferentes períodos e percursos dos estudantes.',tags:['Identidade visual','Motion','Audiovisual'],concept:'A transição entre luz e noite orienta a cor e a linguagem do sistema visual. Aqui serão mostrados o conceito e as primeiras explorações.',process:'Este bloco receberá estudos de gradiente, tipografia, composição e animação, além da adaptação da identidade aos formatos do evento.',result:'Aqui entram os desdobramentos finais: vinhetas, projeções, certificados, peças gráficas e aplicações de palco.'},
     {slug:'tipografia-variavel',title:'Tipografia Variável',short:'TIPO VARIÁVEL',summary:'Um estudo de letra e movimento que coloca em diálogo a ideia de um futuro iminente e o desconforto do passado.',overview:'O case mostra o conceito, a construção da fonte variável e sua expressão em movimento.',tags:['Tipografia','Pesquisa visual','Motion'],concept:'O contraste entre tempos orienta as decisões formais da tipografia. Aqui entram referências, testes de forma e critérios do desenho.',process:'Esta seção mostrará esboços, evolução dos glifos, variações dos eixos e testes de uso da fonte em composição.',result:'O encerramento apresentará a tipografia aplicada e a peça final de motion que explora sua transformação.'}
   ];
-  const catalogue=[["kitkat", "KitKat"], ["fragmin", "Fragmin"], ["revista-infografico", "Infográfico Revista Visão"], ["revista-video-visao", "Revista Vizão"], ["tipo-sp", "Tipo SP"], ["lapis", "Lápis"], ["identidade-pessoal", "Identidade Pessoal"], ["cenario-3d", "Habitat 1989"], ["telefone-3d", "Última chamada"], ["nave-3d-01", "Nave 3D_01"], ["nave-3d-02", "Exodus"], ["emilie-chamie", "Emilie Chamie"]];
+  const catalogue=[["kitkat", "KitKat"], ["fragmin", "Fragmin"], ["revista-infografico", "Infográfico Revista Visão"], ["revista-video-visao", "Revista Vizão"], ["tipo-sp", "Tipo SP"], ["terras-de-agua", "Terras de Água"], ["identidade-pessoal", "Identidade Pessoal"], ["cenario-3d", "Habitat 1989"], ["telefone-3d", "Última chamada"], ["design-20-anos", "Design ESPM 20 anos"], ["nave-3d-02", "Exodus"], ["emilie-chamie", "Emilie Chamie"]];
   const legacyProjects=projects.slice();
   projects.splice(0,projects.length,...catalogue.map(([slug,title])=>legacyProjects.find(p=>p.slug===slug)||{slug,title,short:title,summary:"",overview:"",tags:[],concept:"",process:"",result:""}));
+  const projectNavigation = Array.from(document.querySelectorAll('.case-footer'), footer => {
+    const nav = document.createElement('nav');
+    nav.className = 'project-pagination';
+    nav.setAttribute('aria-label', 'Navegação entre projetos');
+    const links = ['← Projeto anterior', 'Próximo projeto →'].map(label => {
+      const link = document.createElement('a');
+      const title = document.createElement('strong');
+      link.append(label, title);
+      nav.append(link);
+      return {link, title};
+    });
+    footer.before(nav);
+    return links;
+  });
   const gallery=document.getElementById("works-gallery");
   for(const [i,project] of projects.entries()){const link=document.createElement("a");link.href="#project/"+project.slug;const number=document.createElement("span");number.className="gallery-number";number.textContent=String(i+1).padStart(2,"0");const title=document.createElement("h3");title.textContent=project.title;link.append(number,title);gallery.appendChild(link)}
   const body=document.body, homeWork=document.querySelector('.shell .node.work'), homeContact=document.querySelector('.shell .node.contact'), homeAbout=document.querySelector('.shell .node.about'), cube=document.getElementById('works-cube'), stage=document.getElementById('cube-stage');
   function safeRoute(value){try{return decodeURIComponent(value)}catch{return 'home'}}
   let navigationRevision=0;
-  let galleryOrigin=null;
   function show(target, push=false) {
+    if(target==='project/lapis') target='works/all';
+    if(target==='project/nave-3d-01') target='project/design-20-anos';
     const revision=++navigationRevision;
     const galleryTarget=target==='works/all';
     let view='home', project=null, index=-1;
@@ -98,7 +132,16 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
       for(const [id,value] of Object.entries(fields)) document.getElementById(id).textContent=value;
       const tags=document.getElementById('case-tags');tags.replaceChildren();
       for(const label of project.tags){const item=document.createElement('span');item.textContent=label;tags.appendChild(item)}
-      document.getElementById('next-project').href='#project/'+projects[(index+1)%projects.length].slug;
+      const neighbours = [
+        projects[(index + projects.length - 1) % projects.length],
+        projects[(index + 1) % projects.length]
+      ];
+      for (const links of projectNavigation) {
+        links.forEach(({link, title}, position) => {
+          link.href = '#project/' + neighbours[position].slug;
+          title.textContent = neighbours[position].title;
+        });
+      }
     }
     body.dataset.route=view;
     window.dispatchEvent(new CustomEvent("portfolio:route",{detail:target}));
@@ -109,31 +152,9 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
     if(galleryTarget){
       requestAnimationFrame(()=>{
         if(revision!==navigationRevision)return;
-        if(galleryOrigin){
-          galleryOrigin.focus({preventScroll:true});
-          galleryOrigin.scrollIntoView({block:'nearest',behavior:'instant'});
-          galleryOrigin=null;
-          return;
-        }
-        const keyboardEntry=push&&document.activeElement?.matches('.gallery-link:focus-visible');
-        if(push){
-          const heading=document.getElementById('gallery-title');
-          heading.tabIndex=-1;
-          heading.focus({preventScroll:true});
-        }
-        document.querySelector('.works-gallery').scrollIntoView({behavior:push&&!keyboardEntry&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'instant',block:'start'});
+        document.querySelector('.works-gallery').scrollIntoView({behavior:push&&!window.matchMedia('(prefers-reduced-motion:reduce)').matches?'smooth':'instant',block:'start'});
       });
-    }else {
-      window.scrollTo(0,0);
-      if(view==='case'&&push&&galleryOrigin){
-        const heading=[...document.querySelectorAll('article h1, .case-view #case-title')]
-          .find(element=>element.getClientRects().length);
-        if(heading){
-          heading.tabIndex=-1;
-          heading.focus({preventScroll:true});
-        }
-      }else if(view!=='case') galleryOrigin=null;
-    }
+    }else window.scrollTo(0,0);
   }
   homeWork.addEventListener('click',()=>show('works',true));
   homeContact.addEventListener('click',()=>show('contact',true));
@@ -142,9 +163,7 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
     const anchor=e.target.closest('a[href^="#"]');
     if(!anchor)return;
     if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0)return;
-    let target=safeRoute(anchor.getAttribute('href').slice(1));
-    if(gallery.contains(anchor)) galleryOrigin=anchor;
-    if(target==='works'&&galleryOrigin&&anchor.closest('.case-footer, .subhead')) target='works/all';
+    const target=safeRoute(anchor.getAttribute('href').slice(1));
     if(target==='home'||target==='works'||target==='works/all'||target==='contact'||target==='about'||target.startsWith('project/')){e.preventDefault();show(target,true)}
   });
   window.addEventListener('popstate',()=>show(safeRoute(location.hash.slice(1))));
@@ -190,12 +209,12 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
   contactSvg.addEventListener('pointerup',()=>{contactPointer=null});contactSvg.addEventListener('pointercancel',()=>{contactPointer=null});
   
   const aboutTopics=[
-    {num:'01 / Sobre',title:'Designer em movimento.',text:'Sou Naian, designer multidisciplinar em São Paulo. Tenho interesse especial por motion, 3D e audiovisual, e gosto de unir curiosidade e organização para transformar ideias em experiências visuais.'},
-    {num:'02 / Origem',title:'Onde tudo começou.',text:'Meu interesse pelo design nasceu ao ajudar minha mãe com papelaria personalizada e cresceu quando comecei a acompanhar efeitos visuais no cinema. Foi ali que percebi o quanto uma ideia pode se tornar imagem.'},
-    {num:'03 / Motion',title:'Narrativas em movimento.',text:'No motion design, encontro uma forma de criar narrativas do zero: ritmo, transições, composição e tempo dão vida a conceitos que antes existiam apenas na imaginação.'},
-    {num:'04 / 3D',title:'Ideias com dimensão.',text:'A modelagem e a visualização 3D me permitem construir objetos e cenários, experimentar materiais e iluminação e explorar novas formas de apresentar um projeto.'},
-    {num:'05 / Processo',title:'Curiosidade com método.',text:'Gosto de investigar o problema, organizar referências, testar caminhos e refinar os detalhes. Minha prática combina experimentação visual com uma maneira racional de tomar decisões.'},
-    {num:'06 / Referências',title:'O que me inspira.',text:'Cinema, VFX, games, animação e música atravessam meu repertório. Obras como Pacific Rim, Avatar e Tron alimentam meu interesse por mundos visuais e experiências imersivas.'}
+    {num:'01 / Sobre',title:'Designer em movimento.',text:'Olá! Sou Naian, designer interessado por motion design, criação 3D e soluções tecnológicas, áreas que me permitem unir pensamento lógico, experimentação e narrativa para transformar ideias em experiências visuais.'},
+    {num:'02 / Origem',title:'Onde tudo começou.',text:'Minha relação com o design começou ainda jovem, ajudando minha mãe em seu trabalho com papelaria personalizada.\n\nAos 12 anos, iniciei um curso de design que se tornou um divisor de águas na minha trajetória. Foi nesse período que conheci diferentes possibilidades profissionais e percebi que me identificava principalmente com o audiovisual e o 3D.'},
+    {num:'03 / Motion',title:'Narrativas em movimento.',text:'Durante minha formação em Design na ESPM-SP, essa curiosidade se transformou em uma relação ainda mais próxima com o motion design e com a criação de narrativas visuais.\n\nO motion acrescenta tempo, ritmo e transformação, tornando possível construir universos e conduzir diferentes formas de experiência.'},
+    {num:'04 / 3D',title:'Ideias com dimensão.',text:'O que mais me interessa no movimento e no 3D é a possibilidade de materializar pensamentos, histórias e imaginações. A tridimensionalidade aproxima essas ideias do mundo real, permitindo que sejam vistas e sentidas como algo quase tangível.'},
+    {num:'05 / Processo',title:'Curiosidade com método.',text:'Para mim, o design também é uma maneira de pensar. Tenho interesse em observar problemas, encontrar variações e experimentar caminhos até chegar a uma solução coerente com cada realidade. Essa busca constante por compreender, organizar e criar faz parte tanto do meu perfil profissional quanto da maneira como enxergo o mundo.'},
+    {num:'06 / Referências',title:'O que me inspira.',text:'Meu interesse por desenho, filmes, videoclipes e efeitos visuais despertava a vontade de compreender como aqueles universos eram criados. Produções como Pacific Rim, Avatar e Tron, além de animes e videoclipes musicais, tiveram grande influência na formação do meu repertório visual.'}
   ];
   const aboutCube=document.getElementById('about-cube'),aboutStage=document.getElementById('about-stage');
   const aboutFaces=[...document.querySelectorAll('.about-face')],aboutPicks=[...document.querySelectorAll('[data-about-pick]')];
@@ -251,7 +270,7 @@ window.portfolioMotion.register({element:scene,route:'home',controls:[],speed:4,
   const previews=[section.querySelector('.selected-work .section-heading'),...section.querySelectorAll('.selected-grid>a')].filter(Boolean);
   const works=[...document.querySelectorAll('.work-view .work-intro h2,.work-view .work-intro p,.work-view .gallery-link,.work-view .cube-controls,.work-view .project-index,.work-view .gallery-heading,.work-view .works-grid>a')];
   const about=[...document.querySelectorAll('.about-view .about-copy h2,.about-view .about-picker,.about-view .about-detail,.about-view .about-bottom')];
-  const contact=[...document.querySelectorAll('.contact-view .contact-copy h2,.contact-view .contact-copy>p,.contact-view .contact-fields,.contact-view .contact-form>label,.contact-view .contact-actions,.contact-view .contact-bottom')];
+  const contact=[...document.querySelectorAll('.contact-view .contact-copy h2,.contact-view .contact-copy>p,.contact-view .contact-fields,.contact-view .contact-form>label,.contact-view .contact-actions')];
   const items=[...intro,...previews,...works,...about,...contact];
   let observer;
   try {

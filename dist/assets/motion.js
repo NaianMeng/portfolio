@@ -7,10 +7,12 @@
   function pause(entry){stop(entry);entry.waitUntil=performance.now()+9000}
   function tick(now){
     frame=null;
+    const classes=document.documentElement.classList;
+    const opening=classes.contains('home-intro-active')&&!classes.contains('home-intro-revealing');
     for(const entry of entries){
       const active=document.body.dataset.route===entry.route;
       if(active!==entry.active){entry.active=active;entry.hover=false;entry.drag=false;entry.waitUntil=now;stop(entry)}
-      if(!active||document.hidden||reduced.matches||entry.hover||entry.drag){stop(entry);continue}
+      if(!active||opening||document.hidden||reduced.matches||entry.hover||entry.drag){stop(entry);continue}
       const box=entry.element.getBoundingClientRect();
       if(box.width<=0||box.height<=0||box.bottom<=0||box.top>=window.innerHeight){stop(entry);continue}
       if(now<entry.waitUntil)continue;

@@ -13,7 +13,13 @@ body.identidade-active>.case-view{display:none!important}
 @media(max-width:1000px) and (min-width:701px){.id-page .id-eye .tp-eye{font-size:clamp(24px,3.25vw,34px)}.id-intro{grid-template-columns:1fr 1fr}.id-production-left .id-image{aspect-ratio:3/5}}
 @media(max-width:700px){.id-page{--tp-section:56px;--id-group:32px}.id-intro,.id-pair,.id-quote-row,.id-production,.id-applications{grid-template-columns:minmax(0,1fr);gap:32px}.id-page .tp-copy{max-width:48ch}.id-page h2{margin-bottom:20px}.id-page .tp-heading{padding-bottom:32px}.id-eye{padding:8px 0 0}.id-page .id-eye .tp-eye{font-size:clamp(24px,6.3vw,36px)}.id-page .subhead>span{font-size:10px}.id-hero .id-image{aspect-ratio:4/3}.id-intro .id-image{height:auto;min-height:0}.id-intro .id-image img,.id-page .id-application-left img{position:static;height:auto}.id-production>.tp-copy,.id-production>.tp-figure,.id-applications>.tp-figure{grid-column:1;grid-row:auto}.id-production .id-image,.id-pair .id-image{aspect-ratio:auto}.id-page .id-production .id-image img,.id-page .id-pair img{height:auto}.id-application-left .id-image{flex:none}.id-page figcaption{min-height:0}}
 /* Preserve complete artwork while keeping the reference's varied frames. */
-.id-pair .id-image{aspect-ratio:1;background:#aaa}.id-page .id-pair img{object-fit:contain}
+.id-pair .id-image{aspect-ratio:16/10}
 .id-production{grid-template-rows:auto auto}.id-production-left{grid-row:2;align-self:end}.id-production-top{grid-row:1;align-self:start}.id-production-bottom{grid-row:2;align-self:end}.id-production-top .id-image{aspect-ratio:4/3}.id-production-left .id-image{aspect-ratio:4/5}.id-production-bottom .id-image{aspect-ratio:4/5}.id-page .id-production-left img,.id-page .id-production-bottom img{object-fit:contain}
-.id-page .id-quote-row img{object-fit:cover}.id-page .id-application-left img{object-fit:contain;background:#aaa}
+.id-page .id-intro .id-image img{transform:scale(1.9)}
+.id-page .id-quote-row img{object-fit:cover;transform:scale(1.35)}
+.id-page .id-production-top{display:block;align-self:start}
+.id-page .id-production-top .id-image{aspect-ratio:auto}
+.id-page .id-production-top .id-image img{position:static;height:auto}
+
+@media(min-width:701px){.id-page .id-application-left img{object-fit:cover}}
 @media(max-width:700px){.id-pair .id-image{aspect-ratio:auto}.id-production{grid-template-rows:auto}.id-production>.tp-figure{grid-row:auto;align-self:auto}.id-production .id-image{aspect-ratio:auto}.id-page .id-production img{height:auto}.id-page .id-quote-row img{height:100%}}

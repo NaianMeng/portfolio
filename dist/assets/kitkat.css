@@ -6,32 +6,32 @@ body.kitkat-active>.case-view{display:none!important}
 .kk-page .tp-copy p{line-height:1.75}.kk-page .tp-copy p+p{margin-top:20px}
 .kk-page img{display:block;width:100%;height:auto}.kk-page video{display:block;width:100%;height:auto;background:#191919}
 .kk-page figcaption{margin-top:12px;line-height:1.5;max-width:60ch}
-.kk-intro,.kk-production-intro{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(40px,6vw,88px);align-items:center}
+.kk-intro{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:clamp(40px,6vw,88px);align-items:center}
 .kk-intro .kk-logo{align-self:center}.kk-page .kk-logo video{aspect-ratio:47/18;object-fit:contain;background:#c90922}
 .kk-media{position:relative;overflow:hidden}.kk-media img{width:100%;height:100%;object-fit:cover}
 .kk-family-frame,.kk-package-frame{aspect-ratio:2/1}.kk-family-frame img,.kk-package-frame img{object-position:center}
 .kk-flavors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--tp-gap);align-items:start}
-.kk-product{aspect-ratio:3/2}.kk-product img{object-fit:contain}
-.kk-pudim .kk-product{background:#c2c2c2}.kk-pudim img{transform:scale(1.38)}
-.kk-cheesecake img{transform:scale(1.25)}.kk-tiramisu .kk-product{background:#383838}.kk-tiramisu img{transform:scale(2.95)}
-.kk-quote-row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,72px);align-items:center}
+.kk-product{aspect-ratio:3/2}
+.kk-quote-row,.kk-production-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--tp-gap)}
+.kk-quote-row{align-items:center}
+.kk-production-intro{align-items:start}
 .kk-banoffee-frame{aspect-ratio:4/3}.kk-banoffee-frame img{object-fit:cover}
 .kk-eye{margin:0;padding:0 0 28px;text-align:right;min-width:0;border:0}.kk-page .kk-eye .tp-eye{font-size:clamp(28px,3.25vw,45px);line-height:1.35;max-width:none;margin:0;letter-spacing:0}
 .kk-page .kk-eye .tp-quote-mark{margin-bottom:20px}
 .kk-pouch-frame{aspect-ratio:4/3}.kk-pouch-frame img{object-fit:cover}
 .kk-page .kk-motion video{aspect-ratio:16/9;object-fit:contain}
+.kk-retail-views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--tp-gap)}
 .kk-campaign-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,6fr);gap:var(--tp-gap);align-items:start}
-.kk-page .kk-section-title{margin:0 0 32px;max-width:none}
 .kk-social img{aspect-ratio:7/4;object-fit:cover}.kk-page .kk-stories video{aspect-ratio:3/2;object-fit:contain;background:#e6afb2}
 .kk-page .subhead{gap:16px;flex-wrap:wrap}
 .works-grid>a[href="#project/kitkat"],.selected-grid>a[href="#project/kitkat"]{background:linear-gradient(180deg,#0000 30%,#000b),url('kitkat/colecao.webp') center/cover no-repeat;background-clip:padding-box}
 .works-grid>a[href="#project/kitkat"] h3,.works-grid>a[href="#project/kitkat"] .gallery-number{color:#fff;text-shadow:0 1px 8px #0008}
-@media(max-width:1000px) and (min-width:701px){.kk-intro,.kk-production-intro{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:32px;align-items:start}.kk-page .kk-eye .tp-eye{font-size:clamp(24px,3.25vw,34px)}.kk-intro .kk-logo{align-self:center}.kk-production-intro .kk-pouch{align-self:center}.kk-flavors figcaption{font-size:11px}.kk-quote-row{gap:32px}}
+@media(max-width:1000px) and (min-width:701px){.kk-intro{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:32px;align-items:start}.kk-page .kk-eye .tp-eye{font-size:clamp(24px,3.25vw,34px)}.kk-intro .kk-logo{align-self:center}.kk-flavors figcaption{font-size:11px}}
 @media(max-width:700px){
 .kk-page{--tp-section:64px;--kk-group:32px;--tp-gap:24px}
 .kk-intro,.kk-production-intro,.kk-quote-row,.kk-campaign-grid{grid-template-columns:minmax(0,1fr);gap:32px}
 .kk-page .tp-copy{max-width:48ch}.kk-intro .kk-logo{width:100%}
-.kk-flavors{grid-template-columns:minmax(0,1fr);gap:24px}.kk-product{aspect-ratio:3/2}
+.kk-flavors,.kk-retail-views{grid-template-columns:minmax(0,1fr);gap:24px}
 .kk-family-frame,.kk-package-frame{aspect-ratio:16/9}.kk-page .kk-eye{padding:12px 0 0}.kk-page .kk-eye .tp-eye{font-size:clamp(25px,6.5vw,36px)}
-.kk-banoffee-frame,.kk-pouch-frame{aspect-ratio:4/3}.kk-page .kk-section-title{margin-bottom:24px}.kk-page .subhead>span{font-size:10px}
+.kk-banoffee-frame,.kk-pouch-frame{aspect-ratio:4/3}.kk-page .subhead>span{font-size:10px}
 }

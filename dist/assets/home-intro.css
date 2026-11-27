@@ -1,0 +1,38 @@
+.home-intro-pending :is(.site-header, .shell) {
+  visibility: hidden;
+}
+
+/* Keep the docking target steady while the opening is visible. */
+html.home-intro-active body .site-header {
+  transform: none;
+  transition: none;
+}
+
+.home-intro-active .site-brand .brand-hypercube {
+  opacity: 0;
+}
+
+.home-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.home-intro-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--bg, #242426);
+  will-change: opacity;
+}
+
+.home-intro-logo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  pointer-events: all;
+  transform-origin: top left;
+  will-change: transform;
+}
